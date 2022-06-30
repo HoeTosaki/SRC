@@ -33,10 +33,10 @@ class SAGPool(TopKPool):
 
         # Graph filter for GNN
         if K.is_sparse(A):
-            I_N = tf.sparse.eye(self.N, dtype=A.dtype)
+            I_N = tf.sparse.eye(self.n_nodes, dtype=A.dtype)
             A_ = tf.sparse.add(A, I_N)
         else:
-            I_N = tf.eye(self.N, dtype=A.dtype)
+            I_N = tf.eye(self.n_nodes, dtype=A.dtype)
             A_ = A + I_N
         fltr = ops.normalize_A(A_)
 

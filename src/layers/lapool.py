@@ -23,7 +23,7 @@ class LaPool(SRCPool):
         row = A.indices[:, 0]
         col = A.indices[:, 1]
         leader_check = tf.cast(tf.gather(V, row) >= tf.gather(V, col), tf.int32)
-        leader_mask = ops.scatter_prod(leader_check[:, 0], row, self.N)
+        leader_mask = ops.scatter_prod(leader_check[:, 0], row, self.n_nodes)
         leader_mask = tf.cast(leader_mask, tf.bool)
 
         return self.pool(X, A, I, leader_mask=leader_mask)
@@ -31,8 +31,8 @@ class LaPool(SRCPool):
     def select(self, X, A, I, leader_mask=None):
         # Cosine similarity
         if I is None:
-            I = tf.zeros(self.N, dtype=tf.int32)
-        cosine_similarity = sparse_cosine_similarity(X, self.N, leader_mask, I)
+            I = tf.zeros(self.n_nodes, dtype=tf.int32)
+        cosine_similarity = sparse_cosine_similarity(X, self.n_nodes, leader_mask, I)
 
         # Shortest path regularization
         if self.shortest_path_reg:
@@ -54,7 +54,7 @@ class LaPool(SRCPool):
         S = beta * tf.sparse.to_dense(S)
 
         # Leaders end up entirely in their own cluster
-        kronecker_delta = tf.boolean_mask(tf.eye(self.N), leader_mask, axis=1)
+        kronecker_delta = tf.boolean_mask(tf.eye(self.n_nodes), leader_mask, axis=1)
 
         # Create clustering
         S = tf.where(leader_mask[:, None], kronecker_delta, S)

@@ -12,6 +12,8 @@ from src.modules.data import make_dataset
 from src.modules.logging import logdir
 from src.modules.upsampling import upsampling_with_pinv
 from src.modules.utils import to_numpy
+from spektral.utils.sparse import sp_matrix_to_sp_tensor
+
 
 # tf.config.run_functions_eagerly(True)
 physical_devices = tf.config.list_physical_devices("GPU")
@@ -87,7 +89,8 @@ def run_experiment(name, method, pooling, learning_rate, es_patience, es_tol, ru
 
     X = np.array(X)
     S = to_numpy(S)
-    A = ops.sp_matrix_to_sp_tensor(A.astype("f4"))
+    # A = ops.sp_matrix_to_sp_tensor(A.astype("f4"))
+    A = sp_matrix_to_sp_tensor(A.astype("f4"))
 
     # Run main
     results = []

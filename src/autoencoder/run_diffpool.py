@@ -33,3 +33,6 @@ results = run_experiment(
     runs=args.runs,
 )
 results_to_file(args.name, "DiffPool", *results)
+
+if __name__ == '__main__':
+    print('hello diffpool')

@@ -8,9 +8,11 @@ from spektral.layers import ops
 from src.modules.data import make_dataset
 from src.modules.logging import logdir
 from src.modules.utils import to_numpy
+from spektral.utils.sparse import sp_matrix_to_sp_tensor
 
 tf.config.run_functions_eagerly(True)
 physical_devices = tf.config.list_physical_devices("GPU")
+print(physical_devices)
 if len(physical_devices) > 0:
     tf.config.experimental.set_memory_growth(physical_devices[0], True)
 
@@ -75,7 +77,7 @@ def run_experiment(
     A, X, _ = make_dataset(name)
 
     X = np.array(X)
-    A = ops.sp_matrix_to_sp_tensor(A.astype("f4"))
+    A = sp_matrix_to_sp_tensor(A.astype("f4"))
 
     # Run main
     results = []
@@ -124,7 +126,7 @@ def run_experiment(
 
 
 def results_to_file(dataset, method, avg_results, std_results):
-    filename = "{}_result.csv".format(dataset)
+    filename = "{}_{}_result.csv".format(dataset,method)
     with open(filename, "a") as f:
         line = "{}, {} +- {}\n".format(method, avg_results, std_results)
         f.write(line)
